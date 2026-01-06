@@ -102,8 +102,21 @@ class Player(Bot):
         # Only use DiscardAction if it's in legal_actions (which already checks street)
         # legal_actions() returns DiscardAction only when street is 2 or 3
         if DiscardAction in legal_actions:
-            # Always discards the first card in the bot's hand
-            return DiscardAction(0)
+            # Always discards the lowest rank card in your hand
+
+            ranks = "23456789TJQKA" # order of ranks
+            rank_list = [-1, -1, -1] # uninitialized
+
+            for card in range(3): # loop through cards in hand
+                rank_list[card] = ranks.index(my_cards[card][0]) # get rank of each card
+
+            # find the card with the minimum rank
+            if rank_list[0] <= rank_list[1] and rank_list[0] <= rank_list[2]:
+                return DiscardAction(0)
+            elif rank_list[1] <= rank_list[2]:
+                return DiscardAction(1)
+            else:
+                return DiscardAction(2)
         if RaiseAction in legal_actions:
             # the smallest and largest numbers of chips for a legal bet/raise
             min_raise, max_raise = round_state.raise_bounds()
